@@ -3,6 +3,7 @@ package com.assembleia.votacao.service;
 
 import com.assembleia.votacao.domain.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.assembleia.votacao.repository.UsuarioRepository;
 
@@ -15,8 +16,9 @@ public class UsuarioService {
     private UsuarioRepository repository;
 
 
-    public void create(Usuario obj){
+    public ResponseEntity create(Usuario obj){
         repository.save(obj);
+        return null;
     }
 
     public void delete(Long id){
@@ -27,8 +29,6 @@ public class UsuarioService {
         Optional<Usuario> obj = repository.findById(id);
         return  obj.get();
     }
-
-
     public List<Usuario> getAll(){
         return repository.findAll();
     }
