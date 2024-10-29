@@ -29,5 +29,8 @@ public class Pauta implements Serializable {
     private LocalDateTime dataDeAbertura;
     private LocalDateTime tempoDeVotacao;
 
+
+    private Integer numerosVotos = 0;
+
 }
 

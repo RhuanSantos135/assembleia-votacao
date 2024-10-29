@@ -19,15 +19,15 @@ public class PautaController {
     private PautaService pautaService;
 
 
-    @GetMapping
-    public ResponseEntity getAllPautas(){
-        var allPautas = pautaService.getAll();
-        return ResponseEntity.ok(allPautas);
+    @GetMapping("/{id}")
+    public Pauta buscarPauta( @PathVariable Long id ){
+        return pautaService.buscarPauta(id);
     }
 
-    @PostMapping("create")
-    public ResponseEntity createPauta(@RequestBody @Validated Pauta pauta){
-        return pautaService.create(pauta);
 
+    @PostMapping
+    public Pauta criarPauta(@RequestBody Pauta pauta){
+        return pautaService.criaPauta(pauta);
     }
+
 }

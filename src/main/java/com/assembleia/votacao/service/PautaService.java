@@ -9,19 +9,27 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PautaService {
     @Autowired
     private PautaRepository repository;
 
-    public ResponseEntity create(Pauta obj){
-        repository.save(obj);
-        return null;
+
+    public Pauta buscarPauta(Long id ){
+        Optional<Pauta> pauta =  repository.findById(id);
+        if (pauta.isEmpty()){
+            throw new RuntimeException("Não tem pauta cadastrada");
+        } else {
+          return pauta.get();
+        }
     }
 
-    public  List<Pauta> getAll(){
-        return repository.findAll();
+
+    public Pauta criaPauta(Pauta pauta){
+       return repository.save(pauta);
     }
+
 
 }
