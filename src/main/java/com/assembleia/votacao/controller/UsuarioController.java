@@ -15,10 +15,9 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
    @PostMapping
-    public Usuario criarUsuario(@RequestBody Usuario usuario){
+    public Usuario criarUsuario(@RequestBody Usuario usuario) throws IllegalAccessException {
        return  usuarioService.create(usuario);
    }
-
 
    @GetMapping("/{id}")
     public Usuario buscaUsuario(@PathVariable  Long id){
