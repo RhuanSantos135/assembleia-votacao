@@ -25,8 +25,14 @@ public class UsuarioService {
 
     }
 
+    public boolean emailJaCadastrado(String email){
+        return repository.findbyEmail(email).isPresent();
+    }
 
-    public Usuario create(Usuario usuario){
+    public Usuario create(Usuario usuario) throws IllegalAccessException {
+        if (emailJaCadastrado(usuario.getEmail())){
+            throw new IllegalAccessException("E-mail já cadastrato");
+        }
         return repository.save(usuario);
     }
 
