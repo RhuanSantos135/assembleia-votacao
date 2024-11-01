@@ -26,9 +26,15 @@ public class PautaService {
         }
     }
 
-
-    public Pauta criaPauta(Pauta pauta){
-       return repository.save(pauta);
+    public boolean buscaTitulo(String titulo){
+        return repository.findByTitulo(titulo).isPresent();
+    }
+    public Pauta criaPauta(Pauta pauta) throws IllegalAccessException{
+        if(buscaTitulo(pauta.getTitulo())){
+            throw new IllegalAccessException("Já existe essa pauta cadastrada");
+        } else {
+            return repository.save(pauta);
+        }
     }
 
 
