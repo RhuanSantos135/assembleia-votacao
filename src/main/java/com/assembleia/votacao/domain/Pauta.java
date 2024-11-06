@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @AllArgsConstructor
@@ -22,15 +24,11 @@ public class Pauta implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long idDoAssociado;
-    private String titulo;
     private String descricao;
-    private boolean status;
-    private LocalDateTime dataDeAbertura;
-    private LocalDateTime tempoDeVotacao;
+    private LocalDateTime prazoPauta;
 
-
-    private Integer numerosVotos = 0;
 
 }
 

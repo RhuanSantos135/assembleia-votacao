@@ -16,22 +16,32 @@ public class UsuarioService {
 
 
     public Usuario buscarId(Long id){
-        Optional<Usuario> usuario = repository.findById(id);
+        var usuario = repository.findById(id);
         if(usuario.isEmpty()){
-            throw new RuntimeException("Usuario inesistente");
+            throw new RuntimeException("O usuário especificado não existe.");
         } else {
             return usuario.get();
         }
 
     }
 
-
     public Usuario create(Usuario usuario){
-        return repository.save(usuario);
+        var response = repository.findByEmail(usuario.getEmail());
+        if(usuario.getNome().isEmpty()){
+            throw new RuntimeException("O campo de nome é obrigatório e não pode estar vazio.");
+        } if (response == null){
+            return repository.save(usuario);
+        }
+        throw new RuntimeException("O usuário informado já está cadastrado no sistema.");
     }
 
     public void delete(Long id){
-        repository.deleteById(id);
+       var usuario = repository.findById(id);
+       if(usuario.isPresent()){
+           repository.deleteById(id);
+       } else {
+           throw new RuntimeException("O usuário especificado não existe ou já foi excluído.");
+       }
     }
 
     public List<Usuario> getAll(){

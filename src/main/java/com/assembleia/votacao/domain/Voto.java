@@ -20,6 +20,6 @@ public class Voto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int idAssociado;
-    private int idPauta;
+    private Long idAssociado;
+    private Long idPauta;
     }
