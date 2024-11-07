@@ -17,7 +17,6 @@ public class PautaService {
     @Autowired
     private PautaRepository repository;
 
-
     public Pauta buscarPauta(Long id ){
         Optional<Pauta> pauta =  repository.findById(id);
         if (pauta.isEmpty()){
@@ -32,7 +31,7 @@ public class PautaService {
     }
 
     public Pauta deletaPauta(Long id){
-        Optional<Pauta> pauta = repository.findById(id);
+        var pauta = repository.findById(id);
         if(pauta.isPresent()){
             repository.deleteById(id);
             return pauta.get();
@@ -58,6 +57,4 @@ public class PautaService {
         }
         throw new RuntimeException("A pauta não encontrada no banco de dados!");
     }
-
-
 }
