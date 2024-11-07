@@ -5,8 +5,6 @@ import com.assembleia.votacao.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/user")
 public class UsuarioController {
@@ -14,14 +12,20 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-   @PostMapping
-    public Usuario criarUsuario(@RequestBody Usuario usuario) throws IllegalAccessException {
+    @PostMapping
+    public Usuario criarUsuario(@RequestBody Usuario usuario){
        return  usuarioService.create(usuario);
    }
 
-   @GetMapping("/{id}")
+
+    @GetMapping("/{id}")
     public Usuario buscaUsuario(@PathVariable  Long id){
        return usuarioService.buscarId(id);
    }
+
+     @DeleteMapping("/{id}")
+    public void deletaUsuario(@PathVariable Long id) {
+         usuarioService.delete(id);
+    }
 
 }
