@@ -6,9 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface VotoRepository extends JpaRepository<Voto, Long> {
-
      Voto findByIdAssociadoAndIdPauta(Long idAssociado, Long idPauta);
-
-
 }
 

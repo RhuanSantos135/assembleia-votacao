@@ -27,12 +27,11 @@ public class UsuarioService {
 
     public Usuario create(Usuario usuario){
         var response = repository.findByEmail(usuario.getEmail());
-        if(usuario.getNome().isEmpty()){
-            throw new RuntimeException("O campo de nome é obrigatório e não pode estar vazio.");
-        } if (response == null){
+        if(usuario.getNome().isEmpty() && response == null){
+            throw new RuntimeException("O campo de nome é obrigatório e não pode estar vazio. || O usuário informado já está cadastrado no sistema.");
+        } else {
             return repository.save(usuario);
         }
-        throw new RuntimeException("O usuário informado já está cadastrado no sistema.");
     }
 
     public void delete(Long id){

@@ -17,8 +17,8 @@ public class VotoController {
     @Autowired
     private Votoservice votoservice;
 
-    @PostMapping
-    public Voto contabilizaVoto(@RequestBody Voto voto){
+    @PostMapping("/voto")
+    public Voto inserirVoto(@RequestBody Voto voto){
         return votoservice.inserirVoto(voto);
     }
     }

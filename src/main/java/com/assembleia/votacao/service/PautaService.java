@@ -19,7 +19,7 @@ public class PautaService {
 
 
     public Pauta buscarPauta(Long id ){
-        Optional<Pauta> pauta =  repository.findById(id);
+        var pauta =  repository.findById(id);
         if (pauta.isEmpty()){
             throw new RuntimeException("Nenhuma pauta cadastrada no sistema. Verifique e tente novamente.");
         } else {
@@ -28,11 +28,14 @@ public class PautaService {
     }
 
     public Pauta criaPauta(Pauta pauta){
+        if(pauta.getDescricao().isEmpty()){
+            throw new RuntimeException("O campo de descrição é obrigatório e não pode estar vazio.");
+        }
        return repository.save(pauta);
     }
 
     public Pauta deletaPauta(Long id){
-        Optional<Pauta> pauta = repository.findById(id);
+        var pauta = repository.findById(id);
         if(pauta.isPresent()){
             repository.deleteById(id);
             return pauta.get();
