@@ -25,7 +25,6 @@ public class Pauta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long idDoAssociado;
     private String descricao;
     private LocalDateTime prazoPauta;
 
