@@ -93,14 +93,13 @@ Aqui você pode listar as principais rotas da sua API e os corpos de requisiçã
 ```
 
 <h3 id="post-cria-sessao-pauta">POST /pauta</h3>
-**ABRE SESSÂO PARA A PAUTA**
+**ABRE SESSAO PARA A PAUTA**
 ```json
 {
   "id":1,
   "prazoPauta" : ""
 }
 ```
-
 
 <h2 id="colab">🤝 Colaboradoes</h2>
 
