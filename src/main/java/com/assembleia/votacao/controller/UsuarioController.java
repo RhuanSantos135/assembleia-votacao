@@ -31,11 +31,22 @@ public class UsuarioController {
    }
 
     @Operation(summary = "Obter usuario por ID", description = "Essa função tem como objetivo acessar os atributos do usuario por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário encontrado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado. Verifique o ID ou username e tente novamente."),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado. Verifique suas credenciais e tente novamente."),
+    })
     @GetMapping("/{id}")
     public Usuario buscaUsuario(@PathVariable  Long id){
        return usuarioService.buscarId(id);
    }
+
      @Operation(summary = "Excluir usuario por ID", description = "Essa função tem como objetivo excluir o usuario por ID")
+     @ApiResponses(value = {
+             @ApiResponse(responseCode = "200", description = "Usuário excluido com sucesso."),
+             @ApiResponse(responseCode = "404", description = "Usuário não encontrado. Verifique o ID ou username e tente novamente."),
+             @ApiResponse(responseCode = "401", description = "Acesso não autorizado. Verifique suas credenciais e tente novamente."),
+     })
      @DeleteMapping("/{id}")
     public void deletaUsuario(@PathVariable Long id) {
          usuarioService.delete(id);
