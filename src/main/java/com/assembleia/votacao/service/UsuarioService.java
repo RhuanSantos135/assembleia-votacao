@@ -1,6 +1,7 @@
 package com.assembleia.votacao.service;
 
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.assembleia.votacao.domain.Usuario;
 import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
@@ -27,9 +28,11 @@ public class UsuarioService {
 
     public Usuario create(Usuario usuario){
         var response = repository.findByEmail(usuario.getEmail());
+        var senhahash = BCrypt.withDefaults().hashToString(12,usuario.getSenha().toCharArray());
+        usuario.setSenha(senhahash);
         if(usuario.getNome().isEmpty() && response != null ){
             throw new BadRequestException("O campo de nome é obrigatório e não pode estar vazio. || O usuário informado já está cadastrado no sistema.");
-        } else {
+        } else{
             return  repository.save(usuario);
         }
     }
