@@ -1,8 +1,18 @@
 package com.assembleia.votacao.domain;
 
-public class LocalAdress {
 
-    private int postal_code;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ZipCodeStackLocalAddress {
+
+    private String postal_code;
     private String country_code;
     private int latitude;
     private int longitude;

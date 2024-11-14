@@ -23,5 +23,10 @@ public class Usuario  implements Serializable {
     private String email;
     @Schema(description = "Senha de acesso do associado (criptografada)", example = "hashed_password123")
     private String senha;
-
+    @Schema(description = "Codigo postal da cidade", example = "37218000")
+    private String postal_code;
+    @Schema(description = "Nome da cidade", example = "Ijaci")
+    private String city_en;
+    @Schema(description = "Nome do Estado ", example = "Minas Gerais")
+    private String state_en;
 }
