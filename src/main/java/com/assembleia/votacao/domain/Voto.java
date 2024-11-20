@@ -24,6 +24,9 @@ public class Voto {
     private Long id;
     @Schema(description = "Identificador do associado que realizou o voto", example = "11")
     private Long idAssociado;
-    @Schema(description = "Identificador da pauta votada", example = "1")
+    @Schema(description = "Identificador do IdPauta", example = "1")
     private Long idPauta;
-    }
+    @Schema(description = "Identificador para quantidades de votos", example = "Sim")
+    private Boolean votosSimNao;
+
+}
