@@ -1,6 +1,7 @@
 package com.assembleia.votacao.service;
 
 
+import com.assembleia.votacao.DTO.ResultadoDTO;
 import com.assembleia.votacao.domain.Voto;
 import com.assembleia.votacao.repository.PautaRepository;
 import com.assembleia.votacao.repository.UsuarioRepository;
@@ -9,14 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class Votoservice {
 
     @Autowired
     private PautaRepository pautaRepository;
-
     @Autowired
     private VotoRepository votoRepository;
     @Autowired
@@ -38,4 +37,43 @@ public class Votoservice {
          }
         throw new RuntimeException("Usuário ou pauta inexistente.");
     }
+
+    public ResultadoDTO calcularResultado(Long idPauta ) {
+        var dataLocal = LocalDateTime.now();
+        var pauta = pautaRepository.findById(idPauta);
+
+        var votos = votoRepository.findByIdPauta(idPauta);
+
+        if(dataLocal.isBefore(pauta.get().getPrazoPauta())){
+            throw new RuntimeException("Votação em andamento!");
+        }
+        int votosSim = 0;
+        int votosNao = 0 ;
+        String resultado = "";
+        for (int contador = 0 ; contador < votos.size() ; contador++){
+            if (votos.get(contador).getVotosSimNao()){
+                votosSim++;
+            } else {
+                votosNao++;
+            }
+        }
+        if(votosSim > votosNao){
+            resultado = "Pauta aprovada!";
+        }
+        else {
+        resultado =  "Pauta reprovada!";
+        }
+
+        return new ResultadoDTO( idPauta, pauta.get().getDescricao(), votosSim, votosNao, resultado);
+
+    }
+
+
+
+
+
+
+
+
+
 }
