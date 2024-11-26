@@ -12,9 +12,7 @@ import org.mapstruct.factory.Mappers;
 public abstract class MapperUser {
 
     public static final MapperUser INSTANCE = Mappers.getMapper(MapperUser.class);
-
     public  abstract Usuario converteParaUsuaruio(InUserDTO inUserDTO);
-
     public  abstract OutUserDTO converteParaSaidaUsuario(Usuario usuario);
 
 }
