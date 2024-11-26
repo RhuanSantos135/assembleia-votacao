@@ -17,5 +17,4 @@ public abstract class MapperUser {
 
     public  abstract OutUserDTO converteParaSaidaUsuario(Usuario usuario);
 
-
 }
