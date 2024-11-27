@@ -58,7 +58,7 @@ public class PautaService {
                     var data = LocalDateTime.now();
                     pautaExistente.setPrazoPauta(data.plusMinutes(1));
                 }
-                return mapperPauta.converteParaSaidaPauta(repository.save(pautaExistente));
+                return mapperPauta.converteParaSaidaPauta(repository.save(pauta));
             } else {
                 throw new IllegalStateException("Votação em andamento. Não é possível alterar o prazo.");
             }
