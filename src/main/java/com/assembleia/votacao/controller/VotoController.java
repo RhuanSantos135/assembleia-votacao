@@ -1,6 +1,8 @@
 package com.assembleia.votacao.controller;
 
 
+import com.assembleia.votacao.DTO.InPautaDTO;
+import com.assembleia.votacao.DTO.OutPautaDTO;
 import com.assembleia.votacao.DTO.ResultadoDTO;
 import com.assembleia.votacao.domain.Voto;
 import com.assembleia.votacao.service.Votoservice;
@@ -17,8 +19,8 @@ public class VotoController {
 
 
     @PostMapping("/cadastra")
-    public Voto inserirVoto(@RequestBody Voto voto){
-        return votoservice.inserirVoto(voto);
+    public OutPautaDTO inserirVoto(@RequestBody InPautaDTO inPautaDTO){
+        return votoservice.inserirVoto(inPautaDTO);
     }
 
     @GetMapping("/result/{id}")
