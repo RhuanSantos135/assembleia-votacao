@@ -12,5 +12,4 @@ public class InVotoDTO {
     private Long idPauta;
     private Boolean votosSimNao;
 
-
 }
