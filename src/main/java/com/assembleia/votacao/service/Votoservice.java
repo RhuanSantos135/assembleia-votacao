@@ -1,8 +1,11 @@
 package com.assembleia.votacao.service;
 
 
+import com.assembleia.votacao.DTO.InVotoDTO;
+import com.assembleia.votacao.DTO.OutVotoDTO;
 import com.assembleia.votacao.DTO.ResultadoDTO;
 import com.assembleia.votacao.domain.Voto;
+import com.assembleia.votacao.mapper.MapperVoto;
 import com.assembleia.votacao.repository.PautaRepository;
 import com.assembleia.votacao.repository.UsuarioRepository;
 import com.assembleia.votacao.repository.VotoRepository;
@@ -21,7 +24,11 @@ public class Votoservice {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Voto inserirVoto(Voto voto){
+    @Autowired
+    private MapperVoto mapperVoto;
+
+    public OutVotoDTO inserirVoto(InVotoDTO inVotoDTO){
+        Voto voto =  mapperVoto.converteParaVoto(inVotoDTO);
          var data = LocalDateTime.now();
          var response = pautaRepository.findById((long) voto.getIdPauta());
 
@@ -29,7 +36,7 @@ public class Votoservice {
              var responseVoto = votoRepository.findByIdAssociadoAndIdPauta(voto.getIdAssociado(),voto.getIdPauta());
              if (responseVoto == null ){
                  if(data.isBefore(response.get().getPrazoPauta())){
-                     return votoRepository.save(voto);
+                     return mapperVoto.converteParaSaidaVoto(votoRepository.save(voto));
                  }
                  throw new RuntimeException("A votação nesta pauta está encerrada devido ao prazo expirado.");
              }

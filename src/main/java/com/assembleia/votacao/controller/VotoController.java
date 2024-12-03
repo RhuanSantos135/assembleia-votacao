@@ -1,7 +1,7 @@
 package com.assembleia.votacao.controller;
 
 
-import com.assembleia.votacao.DTO.ResultadoDTO;
+import com.assembleia.votacao.DTO.*;
 import com.assembleia.votacao.domain.Voto;
 import com.assembleia.votacao.service.Votoservice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,8 @@ public class VotoController {
 
 
     @PostMapping("/cadastra")
-    public Voto inserirVoto(@RequestBody Voto voto){
-        return votoservice.inserirVoto(voto);
+    public OutVotoDTO inserirVoto(@RequestBody InVotoDTO inVotoDTO){
+        return votoservice.inserirVoto(inVotoDTO);
     }
 
     @GetMapping("/result/{id}")

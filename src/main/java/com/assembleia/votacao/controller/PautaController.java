@@ -1,6 +1,8 @@
 package com.assembleia.votacao.controller;
 
 
+import com.assembleia.votacao.DTO.InPautaDTO;
+import com.assembleia.votacao.DTO.OutPautaDTO;
 import com.assembleia.votacao.domain.Pauta;
 import com.assembleia.votacao.domain.Usuario;
 import com.assembleia.votacao.service.PautaService;
@@ -22,8 +24,9 @@ public class PautaController {
     private PautaService pautaService;
 
 
+
     @GetMapping("/{id}")
-    public Pauta buscarPauta(@PathVariable Long id ){
+    public OutPautaDTO buscarPauta(@PathVariable Long id ){
         return pautaService.buscarPauta(id);
     }
 
@@ -37,8 +40,8 @@ public class PautaController {
                     description = "Nenhuma pauta cadastrada no sistema. Verifique e tente novamente.")
     })
     @PostMapping
-    public Pauta criarPauta(@RequestBody Pauta pauta) throws IllegalAccessException{
-        return pautaService.criaPauta(pauta);
+    public OutPautaDTO criarPauta(@RequestBody InPautaDTO inPautaDTO) throws IllegalAccessException{
+        return pautaService.criaPauta(inPautaDTO);
     }
 
     @Operation(summary = "Abrir sessão", description = "Essa funcionalidade tem como base abrir uma sessão para a pauta informada")
@@ -51,8 +54,8 @@ public class PautaController {
                     description = "A pauta não encontrada no banco de dados!")
     })
     @PostMapping("/sessao")
-    public Pauta inserirSessao(@RequestBody Pauta pauta){
-        return pautaService.inserirSessao(pauta);
+    public OutPautaDTO inserirSessao(@RequestBody InPautaDTO inPautaDTO){
+        return pautaService.inserirSessao(inPautaDTO);
     }
 
 }
