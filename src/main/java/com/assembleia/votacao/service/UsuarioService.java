@@ -19,18 +19,20 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
-    @Autowired
+
     private UsuarioRepository repository;
 
-    @Autowired
+
     private ZipCodeStackService zipCodeStackService;
 
-    public UsuarioService(MapperUser mapperUser) {
-        this.mapperUser = mapperUser;
-    }
 
     private final   MapperUser mapperUser;
 
+    public UsuarioService(MapperUser mapperUser, UsuarioRepository repository, ZipCodeStackService zipCodeStackService) {
+        this.mapperUser = mapperUser;
+        this.repository = repository;
+        this.zipCodeStackService = zipCodeStackService;
+    }
 
     public OutUserDTO buscarId(Long id) {
         var usuario = repository.findById(id);
