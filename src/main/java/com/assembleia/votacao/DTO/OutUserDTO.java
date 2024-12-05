@@ -13,6 +13,7 @@ import lombok.Setter;
 public class OutUserDTO {
     private Long idAssociado;
     private String nome;
+    private String email;
     private String postal_code;
     private String city_en;
     private String state_en;
