@@ -11,6 +11,7 @@ import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.stereotype.Service;
 import com.assembleia.votacao.repository.UsuarioRepository;
 
@@ -19,18 +20,22 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
-    @Autowired
+
+    private final OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor;
     private UsuarioRepository repository;
 
-    @Autowired
+
     private ZipCodeStackService zipCodeStackService;
 
-    public UsuarioService(MapperUser mapperUser) {
-        this.mapperUser = mapperUser;
-    }
 
     private final   MapperUser mapperUser;
 
+    public UsuarioService(MapperUser mapperUser, UsuarioRepository repository, ZipCodeStackService zipCodeStackService, OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor) {
+        this.mapperUser = mapperUser;
+        this.repository = repository;
+        this.zipCodeStackService = zipCodeStackService;
+        this.openEntityManagerInViewInterceptor = openEntityManagerInViewInterceptor;
+    }
 
     public OutUserDTO buscarId(Long id) {
         var usuario = repository.findById(id);
