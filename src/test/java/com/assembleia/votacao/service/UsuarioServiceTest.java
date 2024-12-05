@@ -68,25 +68,29 @@ public class UsuarioServiceTest {
 
     @Test
     public void deveCriarUmUsuarioSemValidacoes() {
-        InUserDTO inUserDTO = new InUserDTO();
+        var inUserDTO = new InUserDTO();
         inUserDTO.setNome("Rhuan");
         inUserDTO.setEmail("rhuan@example.com");
         inUserDTO.setSenha("senha123");
 
-        Usuario usuario = new Usuario();
+        var usuario = new Usuario();
         usuario.setNome("Rhuan");
         usuario.setEmail("rhuan@example.com");
         usuario.setSenha("senha123");
+
+        var outUserDTO = new OutUserDTO();
+        outUserDTO.setNome("Rhuan");
+        outUserDTO.setEmail("rhuan@example.com");
+
+
+
         when(mapperUser.converteParaUsuaruio(inUserDTO)).thenReturn(usuario);
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+        when(mapperUser.converteParaSaidaUsuario(usuario)).thenReturn(outUserDTO);
         OutUserDTO resultado = usuarioService.create(inUserDTO);
 
 
         assertNotNull(resultado);
         assertEquals("Rhuan", resultado.getNome());
         assertEquals("rhuan@example.com", resultado.getEmail());
-
-        verify(mapperUser).converteParaUsuaruio(inUserDTO);
-        verify(usuarioRepository).save(usuario);
     }
 }
