@@ -78,9 +78,7 @@ public class UsuarioServiceTest {
         usuario.setEmail("rhuan@example.com");
         usuario.setSenha("senha123");
         when(mapperUser.converteParaUsuaruio(inUserDTO)).thenReturn(usuario);
-
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-
         OutUserDTO resultado = usuarioService.create(inUserDTO);
 
 
