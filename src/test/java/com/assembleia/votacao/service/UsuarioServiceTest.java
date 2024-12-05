@@ -58,10 +58,11 @@ public class UsuarioServiceTest {
 
     @Test
     public void deveRetornaErroUsuarioNaoEspecificado(){
-        Long idInexistente = 999L;
-        given(usuarioRepository.findById(idInexistente)).willReturn(Optional.empty());
+
+        var usuario  = mock(Usuario.class);
+
         assertThrows(ObjectNotFoundException.class, () -> {
-            usuarioService.buscarId(idInexistente);
+            usuarioService.buscarId(usuario.getIdAssociado());
         });
     }
 
