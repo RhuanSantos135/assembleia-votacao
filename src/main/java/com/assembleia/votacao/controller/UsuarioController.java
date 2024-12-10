@@ -38,7 +38,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado. Verifique o ID ou username e tente novamente."),
             @ApiResponse(responseCode = "401", description = "Acesso não autorizado. Verifique suas credenciais e tente novamente."),
     })
-    @GetMapping("buscousuario/{id}")
+    @GetMapping("buscar/{id}")
     public OutUserDTO buscaUsuario(@PathVariable  Long id){
        return usuarioService.buscarId(id);
    }

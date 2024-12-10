@@ -6,10 +6,7 @@ import com.assembleia.votacao.domain.Usuario;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
 import com.assembleia.votacao.repository.UsuarioRepository;
-import org.instancio.Instancio;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 public class UsuarioServiceTest {
@@ -41,54 +34,59 @@ public class UsuarioServiceTest {
     @InjectMocks
     private UsuarioService usuarioService;
 
+    private Usuario usuario;
+    private OutUserDTO outUserDTO;
+    private InUserDTO inUserDTO;
 
-
-    @Test
-    public void deveRetornaUsuarioPorId(){
-        var usuario = new Usuario();
-        var outusuario = new OutUserDTO();
+    @BeforeEach
+    void setUp() {
+        usuario = new Usuario();
         usuario.setIdAssociado(1L);
-        outusuario.setIdAssociado(1L);
-        given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outusuario);
-        given(usuarioRepository.findById(usuario.getIdAssociado())).willReturn(Optional.of(usuario));
-        var result = usuarioService.buscarId(usuario.getIdAssociado());
-        assertEquals(1L, result.getIdAssociado());
-    }
-
-
-    @Test
-    public void deveRetornaErroUsuarioNaoEspecificado(){
-
-        var usuario  = mock(Usuario.class);
-
-        assertThrows(ObjectNotFoundException.class, () -> {
-            usuarioService.buscarId(usuario.getIdAssociado());
-        });
-    }
-
-
-    @Test
-    public void deveCriarUmUsuarioSemValidacoes() {
-        var inUserDTO = new InUserDTO();
-        inUserDTO.setNome("Rhuan");
-        inUserDTO.setEmail("rhuan@example.com");
-        inUserDTO.setSenha("senha123");
-
-        var usuario = new Usuario();
         usuario.setNome("Rhuan");
         usuario.setEmail("rhuan@example.com");
         usuario.setSenha("senha123");
 
-        var outUserDTO = new OutUserDTO();
+        outUserDTO = new OutUserDTO();
+        outUserDTO.setIdAssociado(1L);
         outUserDTO.setNome("Rhuan");
         outUserDTO.setEmail("rhuan@example.com");
 
+        inUserDTO = new InUserDTO();
+        inUserDTO.setNome("Rhuan");
+        inUserDTO.setEmail("rhuan@example.com");
+        inUserDTO.setSenha("senha123");
+    }
+
+    @Test
+    public void deveRetornaUsuarioPorId() {
+        given(usuarioRepository.findById(usuario.getIdAssociado())).willReturn(Optional.of(usuario));
+        given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outUserDTO);
+
+        var result = usuarioService.buscarId(usuario.getIdAssociado());
+
+        assertNotNull(result);
+        assertEquals(1L, result.getIdAssociado());
+    }
+
+    @Test
+    public void deveRetornaErroUsuarioNaoEncontrado() {
+        given(usuarioRepository.findById(any())).willReturn(Optional.empty());
+
+        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> {
+            usuarioService.buscarId(999L);
+        });
+
+        assertEquals("O usuário especificado não existe.", exception.getMessage());
+    }
+
+    @Test
+    public void deveCriarUsuario() {
+
+        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
+        given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outUserDTO);
 
 
-        when(mapperUser.converteParaUsuaruio(inUserDTO)).thenReturn(usuario);
-        when(mapperUser.converteParaSaidaUsuario(usuario)).thenReturn(outUserDTO);
-        OutUserDTO resultado = usuarioService.create(inUserDTO);
-
+        var resultado = usuarioService.create(inUserDTO);
 
         assertNotNull(resultado);
         assertEquals("Rhuan", resultado.getNome());

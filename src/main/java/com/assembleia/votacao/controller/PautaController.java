@@ -40,7 +40,7 @@ public class PautaController {
                     description = "Nenhuma pauta cadastrada no sistema. Verifique e tente novamente.")
     })
     @PostMapping("/criar")
-    public OutPautaDTO criarPauta(@RequestBody InPautaDTO inPautaDTO) throws IllegalAccessException{
+    public OutPautaDTO criarPauta(@RequestBody InPautaDTO inPautaDTO)   {
         return pautaService.criaPauta(inPautaDTO);
     }
 
