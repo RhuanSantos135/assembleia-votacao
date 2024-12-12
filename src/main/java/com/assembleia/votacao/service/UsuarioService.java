@@ -11,6 +11,7 @@ import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.stereotype.Service;
 import com.assembleia.votacao.repository.UsuarioRepository;
 
@@ -19,18 +20,22 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
-    @Autowired
+
+    private final OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor;
     private UsuarioRepository repository;
 
-    @Autowired
+
     private ZipCodeStackService zipCodeStackService;
 
-    public UsuarioService(MapperUser mapperUser) {
-        this.mapperUser = mapperUser;
-    }
 
     private final   MapperUser mapperUser;
 
+    public UsuarioService(MapperUser mapperUser, UsuarioRepository repository, ZipCodeStackService zipCodeStackService, OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor) {
+        this.mapperUser = mapperUser;
+        this.repository = repository;
+        this.zipCodeStackService = zipCodeStackService;
+        this.openEntityManagerInViewInterceptor = openEntityManagerInViewInterceptor;
+    }
 
     public OutUserDTO buscarId(Long id) {
         var usuario = repository.findById(id);
@@ -44,7 +49,6 @@ public class UsuarioService {
         if (usuario.getNome().isEmpty() || repository.findByEmail(usuario.getEmail()) != null) {
             throw new BadRequestException("O campo de nome é obrigatório e o usuário já está cadastrado.");
         }
-
         var senhaHash = BCrypt.withDefaults().hashToString(12, usuario.getSenha().toCharArray());
         usuario.setSenha(senhaHash);
 
@@ -60,6 +64,8 @@ public class UsuarioService {
                     usuario.setState_en(location.getState_en());
                 }
             }
+        } else {
+            throw new BadRequestException("Postal Code Deve estar preenchido");
         }
         return mapperUser.converteParaSaidaUsuario(usuario);
     }
