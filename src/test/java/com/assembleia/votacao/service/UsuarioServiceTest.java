@@ -3,6 +3,7 @@ package com.assembleia.votacao.service;
 import com.assembleia.votacao.DTO.InUserDTO;
 import com.assembleia.votacao.DTO.OutUserDTO;
 import com.assembleia.votacao.domain.Usuario;
+import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
 import com.assembleia.votacao.repository.UsuarioRepository;
@@ -45,6 +46,7 @@ public class UsuarioServiceTest {
         usuario.setNome("Rhuan");
         usuario.setEmail("rhuan@example.com");
         usuario.setSenha("senha123");
+        usuario.setPostal_code("90210");
 
         outUserDTO = new OutUserDTO();
         outUserDTO.setIdAssociado(1L);
@@ -55,6 +57,7 @@ public class UsuarioServiceTest {
         inUserDTO.setNome("Rhuan");
         inUserDTO.setEmail("rhuan@example.com");
         inUserDTO.setSenha("senha123");
+        inUserDTO.setPostal_code("90210");
     }
 
     @Test
@@ -92,4 +95,66 @@ public class UsuarioServiceTest {
         assertEquals("Rhuan", resultado.getNome());
         assertEquals("rhuan@example.com", resultado.getEmail());
     }
+
+    @Test
+    public void deveRetornarErroNomeNaoEncontrato() {
+        var inuser = mock(InUserDTO.class);
+        var usuarioburro = mock(Usuario.class);
+
+        given(usuarioburro.getNome()).willReturn("");
+        given(mapperUser.converteParaUsuaruio(inuser)).willReturn(usuarioburro);
+
+        var exception = assertThrows(BadRequestException.class, () -> {
+            usuarioService.create(inuser);
+
+        });
+        assertEquals("O campo de nome é obrigatório e o usuário já está cadastrado.", exception.getMessage());
+
+    }
+
+    @Test
+    public void deveRetornaErroEmailDiferenteDeNull() {
+
+        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
+        given(usuarioRepository.findByEmail(usuario.getEmail())).willReturn(usuario);
+        var exception = assertThrows(BadRequestException.class, () -> {
+            usuarioService.create(inUserDTO);
+
+        });
+        assertEquals("O campo de nome é obrigatório e o usuário já está cadastrado.", exception.getMessage());
+
+    }
+
+    @Test
+    public void deveRetornaErroPostalCodeNaoPreenchido() {
+
+        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
+        usuario.setPostal_code(null);
+
+        var execption = assertThrows(BadRequestException.class, () -> {
+            usuarioService.create(inUserDTO);
+        });
+        assertEquals("Postal Code Deve estar preenchido", execption.getMessage());
+    }
+
+
+    @Test
+    public void deveExcluirUsuarioPorId() {
+        given(usuarioRepository.findById(usuario.getIdAssociado())).willReturn(Optional.of(usuario));
+        usuarioService.delete(usuario.getIdAssociado());
+        verify(usuarioRepository).deleteById(usuario.getIdAssociado());
+    }
+
+    @Test
+    public void deveRetornaErroUsuarioNaoEncontradoAoExcluir(){
+        var user = mock(Usuario.class);
+
+        var execption = assertThrows(ObjectNotFoundException.class , ()-> {
+            usuarioService.delete(user.getIdAssociado());
+        });
+        assertEquals("O usuário especificado não existe ou já foi excluído." , execption.getMessage());
+
+    }
+
+
 }

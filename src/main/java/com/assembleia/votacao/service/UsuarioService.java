@@ -49,7 +49,6 @@ public class UsuarioService {
         if (usuario.getNome().isEmpty() || repository.findByEmail(usuario.getEmail()) != null) {
             throw new BadRequestException("O campo de nome é obrigatório e o usuário já está cadastrado.");
         }
-
         var senhaHash = BCrypt.withDefaults().hashToString(12, usuario.getSenha().toCharArray());
         usuario.setSenha(senhaHash);
 
@@ -65,6 +64,8 @@ public class UsuarioService {
                     usuario.setState_en(location.getState_en());
                 }
             }
+        } else {
+            throw new BadRequestException("Postal Code Deve estar preenchido");
         }
         return mapperUser.converteParaSaidaUsuario(usuario);
     }
