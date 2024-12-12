@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +48,7 @@ public class UsuarioServiceTest {
         usuario.setEmail("rhuan@example.com");
         usuario.setSenha("senha123");
         usuario.setPostal_code("90210");
+
 
         outUserDTO = new OutUserDTO();
         outUserDTO.setIdAssociado(1L);
@@ -149,10 +151,28 @@ public class UsuarioServiceTest {
     public void deveRetornaErroUsuarioNaoEncontradoAoExcluir(){
         var user = mock(Usuario.class);
 
-        var execption = assertThrows(ObjectNotFoundException.class , ()-> {
+        var execption = assertThrows(ObjectNotFoundException.class , () -> {
             usuarioService.delete(user.getIdAssociado());
         });
         assertEquals("O usuário especificado não existe ou já foi excluído." , execption.getMessage());
+
+    }
+
+
+    @Test
+    public void deveRetornaTodosUsuario(){
+
+        given(usuarioRepository.findAll()).willReturn(List.of(usuario));
+
+        var result = usuarioService.getAll();
+
+        assertEquals(result.get(0).getIdAssociado(), 1L);
+        assertEquals(result.get(0).getNome(), "Rhuan");
+        assertEquals(result.get(0).getEmail(), "rhuan@example.com");
+        assertEquals(result.get(0).getPostal_code(), "90210");
+        assertEquals(result.get(0).getSenha(), "senha123");
+
+
 
     }
 
