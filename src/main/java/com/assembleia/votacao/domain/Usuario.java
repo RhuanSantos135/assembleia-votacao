@@ -29,4 +29,5 @@ public class Usuario  implements Serializable {
     private String city_en;
     @Schema(description = "Nome do Estado ", example = "Minas Gerais")
     private String state_en;
+
 }
