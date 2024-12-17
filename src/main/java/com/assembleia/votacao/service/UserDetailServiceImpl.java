@@ -23,7 +23,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var usuario = usuarioRepository.findByEmail(username).get();
+        var usuario = usuarioRepository.findByNome(username);
+        if (usuario == null) {
+            throw new UsernameNotFoundException("Usuário não encontrado: " + username);
+        }
         return (UserDetails) mapperUserDetails.converteParaUserDetails(Optional.of(usuario));
     }
+
 }
