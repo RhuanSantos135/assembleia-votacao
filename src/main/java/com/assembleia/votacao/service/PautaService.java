@@ -24,14 +24,14 @@ public class PautaService {
     public OutPautaDTO buscarPauta(Long id) {
         var pauta = repository.findById(id);
         if (pauta.isEmpty()) {
-            throw new BadRequestException("Nenhuma pauta cadastrada no sistema. Verifique e tente novamente.");
+            throw new ObjectNotFoundException("Nenhuma pauta cadastrada no sistema. Verifique e tente novamente.");
         } else {
             return mapperPauta.converteParaSaidaPauta(pauta.get());
         }
     }
 
     public OutPautaDTO criaPauta(InPautaDTO inPautaDTO) {
-        Pauta pauta = mapperPauta.converteParaPauta(inPautaDTO);
+        var pauta = mapperPauta.converteParaPauta(inPautaDTO);
         return mapperPauta.converteParaSaidaPauta(repository.save(pauta));
     }
 
@@ -46,11 +46,11 @@ public class PautaService {
     }
 
     public OutPautaDTO inserirSessao(InPautaDTO inPautaDTO) {
-        Pauta pauta = mapperPauta.converteParaPauta(inPautaDTO);
+        var pauta = mapperPauta.converteParaPauta(inPautaDTO);
         var response = repository.findById(pauta.getId());
 
         if (response.isPresent()) {
-            Pauta pautaExistente = response.get();
+            var pautaExistente = response.get();
             if (pautaExistente.getPrazoPauta() == null) {
                 if (pauta.getPrazoPauta() != null) {
                     pautaExistente.setPrazoPauta(pauta.getPrazoPauta());
