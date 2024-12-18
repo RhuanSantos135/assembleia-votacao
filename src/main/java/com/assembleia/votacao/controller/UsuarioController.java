@@ -1,5 +1,7 @@
 package com.assembleia.votacao.controller;
 
+import com.assembleia.votacao.DTO.InUserDTO;
+import com.assembleia.votacao.DTO.OutUserDTO;
 import com.assembleia.votacao.domain.Usuario;
 import com.assembleia.votacao.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +28,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400",
                     description = "O campo de nome é obrigatório e não pode estar vazio. || O usuário informado já está cadastrado no sistema.")})
     @PostMapping
-    public Usuario criarUsuario(@RequestBody Usuario usuario){
+    public OutUserDTO criarUsuario(@RequestBody InUserDTO usuario){
        return  usuarioService.create(usuario);
    }
 
@@ -36,8 +38,8 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado. Verifique o ID ou username e tente novamente."),
             @ApiResponse(responseCode = "401", description = "Acesso não autorizado. Verifique suas credenciais e tente novamente."),
     })
-    @GetMapping("/{id}")
-    public Usuario buscaUsuario(@PathVariable  Long id){
+    @GetMapping("buscar/{id}")
+    public OutUserDTO buscaUsuario(@PathVariable  Long id){
        return usuarioService.buscarId(id);
    }
 

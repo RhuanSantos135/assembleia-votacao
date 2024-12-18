@@ -1,18 +1,11 @@
 package com.assembleia.votacao.controller;
 
 
+import com.assembleia.votacao.DTO.*;
 import com.assembleia.votacao.domain.Voto;
 import com.assembleia.votacao.service.Votoservice;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -24,9 +17,15 @@ public class VotoController {
 
 
     @PostMapping("/cadastra")
-    public Voto inserirVoto(@RequestBody Voto voto){
-        return votoservice.inserirVoto(voto);
+    public OutVotoDTO inserirVoto(@RequestBody InVotoDTO inVotoDTO){
+        return votoservice.inserirVoto(inVotoDTO);
     }
+
+    @GetMapping("/result/{id}")
+    public ResultadoDTO calculaResultado(@PathVariable Long id) {
+        return votoservice.calcularResultado(id);
     }
+
+}
 
 
