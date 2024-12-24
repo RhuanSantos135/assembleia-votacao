@@ -28,7 +28,7 @@ public class Votoservice {
     private MapperVoto mapperVoto;
 
     public OutVotoDTO inserirVoto(InVotoDTO inVotoDTO){
-        Voto voto =  mapperVoto.converteParaVoto(inVotoDTO);
+         var voto =  mapperVoto.converteParaVoto(inVotoDTO);
          var data = LocalDateTime.now();
          var response = pautaRepository.findById((long) voto.getIdPauta());
 

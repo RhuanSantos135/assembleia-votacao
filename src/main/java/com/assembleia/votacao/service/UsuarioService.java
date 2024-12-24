@@ -10,6 +10,7 @@ import com.assembleia.votacao.domain.ZipCodeStackResponse;
 import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
+import com.assembleia.votacao.validation.UsuarioValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class UsuarioService {
 
 
     private ZipCodeStackService zipCodeStackService;
+    private UsuarioValidation usuarioValidation;
 
 
     private final   MapperUser mapperUser;
@@ -49,23 +51,13 @@ public class UsuarioService {
         if (usuario.getNome().isEmpty() || repository.findByEmail(usuario.getEmail()) != null) {
             throw new BadRequestException("O campo de nome é obrigatório e o usuário já está cadastrado.");
         }
-        var senhaHash = BCrypt.withDefaults().hashToString(12, usuario.getSenha().toCharArray());
-        usuario.setSenha(senhaHash);
+        var senhaSegura  =  usuarioValidation.geraSenhaCriptografada(inUserDTO.getSenha());
+        usuario.setSenha(senhaSegura);
 
         if (usuario.getPostal_code() != null && !usuario.getPostal_code().isEmpty()) {
-            ZipCodeStackResponse response = zipCodeStackService.getLocation(usuario.getPostal_code(), "BR");
-
-            if (response != null && response.getResults() != null && !response.getResults().isEmpty()) {
-                List<ZipCodeStackLocalAddress> addresses = response.getResults().get(usuario.getPostal_code());
-
-                if (addresses != null && !addresses.isEmpty()) {
-                    ZipCodeStackLocalAddress location = addresses.get(0);
-                    usuario.setCity_en(location.getCity_en());
-                    usuario.setState_en(location.getState_en());
-                }
-            }
-        } else {
-            throw new BadRequestException("Postal Code Deve estar preenchido");
+            ZipCodeStackLocalAddress location = usuarioValidation.validaPostalCode(usuario.getPostal_code());
+            usuario.setCity_en(location.getCity_en());
+            usuario.setState_en(location.getState_en());
         }
         return mapperUser.converteParaSaidaUsuario(usuario);
     }

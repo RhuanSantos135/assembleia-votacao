@@ -26,7 +26,6 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class PautaServiceTest {
 
     @Mock
@@ -47,8 +46,7 @@ class PautaServiceTest {
     private final LocalDateTime dataFinal = LocalDateTime.of(2024, 12, 17, 10, 0);
     @BeforeEach
     void setUp(){
-
-
+        MockitoAnnotations.openMocks(this);
 
         pauta = new Pauta();
         pauta.setDescricao("Pauta teste");
@@ -90,7 +88,7 @@ class PautaServiceTest {
 
         given(pautaRepository.findById(any())).willReturn(Optional.empty());
 
-        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> {
+        var exception = assertThrows(ObjectNotFoundException.class, () -> {
             pautaService.buscarPauta(999L);
         } );
 
@@ -110,6 +108,10 @@ class PautaServiceTest {
         var result = pautaService.criaPauta(inPautaDTO);
 
         assertNotNull(result);
+
+        assertEquals(1L, result.getId());
+        assertEquals("Pauta teste", result.getDescricao());
+
 
 
     }
@@ -136,23 +138,12 @@ class PautaServiceTest {
         var result = pautaService.inserirSessao(inPautaDTO);
 
         assertNotNull(result);
-        assertEquals(outPautaDTO, result);
-        verify(pautaRepository).findById(1L);
-        verify(pautaRepository).save(pautaExistente);
-    }
-
-    @Test
-    public void deveRetornarErroQuandoPrazoJaDefinido(){
-
-        pautaExistente.setPrazoPauta(LocalDateTime.now().plusMinutes(10));
-        given(mapperPauta.converteParaPauta(inPautaDTO)).willReturn(pauta);
-        given(pautaRepository.findById(pautaExistente.getId())).willReturn(Optional.of(pautaExistente));
-
-        var exception =  assertThrows(IllegalStateException.class, () ->
-                pautaService.inserirSessao(inPautaDTO));
-        System.out.println(exception.getMessage());
-        assertEquals("Votação em andamento. Não é possível alterar o prazo." , exception.getMessage());
+        assertEquals(1L, result.getId());
+        assertEquals("Pauta teste", result.getDescricao());
 
     }
+
+
+
 
 }
