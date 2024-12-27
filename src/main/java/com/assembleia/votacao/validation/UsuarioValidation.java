@@ -5,10 +5,13 @@ import com.assembleia.votacao.domain.ZipCodeStackLocalAddress;
 import com.assembleia.votacao.domain.ZipCodeStackResponse;
 import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.service.ZipCodeStackService;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
+@Component
 public class UsuarioValidation {
 
     private ZipCodeStackService zipCodeStackService;

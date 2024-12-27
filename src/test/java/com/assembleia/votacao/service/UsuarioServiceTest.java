@@ -3,10 +3,12 @@ package com.assembleia.votacao.service;
 import com.assembleia.votacao.DTO.InUserDTO;
 import com.assembleia.votacao.DTO.OutUserDTO;
 import com.assembleia.votacao.domain.Usuario;
+import com.assembleia.votacao.domain.ZipCodeStackLocalAddress;
 import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
 import com.assembleia.votacao.repository.UsuarioRepository;
+import com.assembleia.votacao.validation.UsuarioValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +35,13 @@ public class UsuarioServiceTest {
     @Mock
     private MapperUser mapperUser;
 
+    @Mock
+    private UsuarioValidation usuarioValidation;
+
     @InjectMocks
     private UsuarioService usuarioService;
+
+
 
     private Usuario usuario;
     private OutUserDTO outUserDTO;
@@ -54,6 +61,9 @@ public class UsuarioServiceTest {
         outUserDTO.setIdAssociado(1L);
         outUserDTO.setNome("Rhuan");
         outUserDTO.setEmail("rhuan@example.com");
+        outUserDTO.setPostal_code("90210");
+        outUserDTO.setState_en("Minas");
+        outUserDTO.setCity_en("Ijaci");
 
         inUserDTO = new InUserDTO();
         inUserDTO.setNome("Rhuan");
@@ -85,17 +95,25 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    public void deveCriarUsuario() {
+    public void deveCriarUsuario() throws InstantiationException, IllegalAccessException {
+
+        var zipCodeStackAddress =  mock(ZipCodeStackLocalAddress.class);
+
+        given(zipCodeStackAddress.getCity_en()).willReturn("Ijaci");
+        given(zipCodeStackAddress.getState_en()).willReturn("Minas");
 
         given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
         given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outUserDTO);
-
+        given(usuarioValidation.geraSenhaCriptografada(inUserDTO.getSenha())).willReturn(inUserDTO.getSenha());
+        given(usuarioValidation.validaPostalCode(usuario.getPostal_code())).willReturn(zipCodeStackAddress);
 
         var resultado = usuarioService.create(inUserDTO);
 
         assertNotNull(resultado);
         assertEquals("Rhuan", resultado.getNome());
         assertEquals("rhuan@example.com", resultado.getEmail());
+        assertEquals("Ijaci", resultado.getCity_en());
+        assertEquals("Minas" , resultado.getState_en());
     }
 
     @Test
@@ -130,14 +148,20 @@ public class UsuarioServiceTest {
     @Test
     public void deveRetornaErroPostalCodeNaoPreenchido() {
 
-        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
-        usuario.setPostal_code(null);
+        var usuarioPadrao = mock(Usuario.class);
+        var usuarioIn = mock(InUserDTO.class);
+
+        given(mapperUser.converteParaUsuaruio(usuarioIn)).willReturn(usuarioPadrao);
+        given(usuarioPadrao.getPostal_code()).willReturn(null);
 
         var execption = assertThrows(BadRequestException.class, () -> {
-            usuarioService.create(inUserDTO);
+            usuarioService.create(usuarioIn);
         });
-        assertEquals("Postal Code Deve estar preenchido", execption.getMessage());
+
+        assertEquals("Postal Code deve estar preenchido.", execption.getMessage());
     }
+
+
 
 
     @Test

@@ -22,21 +22,17 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
-    private final OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor;
     private UsuarioRepository repository;
 
 
-    private ZipCodeStackService zipCodeStackService;
     private UsuarioValidation usuarioValidation;
-
 
     private final   MapperUser mapperUser;
 
-    public UsuarioService(MapperUser mapperUser, UsuarioRepository repository, ZipCodeStackService zipCodeStackService, OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor) {
+    public UsuarioService(MapperUser mapperUser, UsuarioRepository repository, UsuarioValidation usuarioValidation) {
         this.mapperUser = mapperUser;
         this.repository = repository;
-        this.zipCodeStackService = zipCodeStackService;
-        this.openEntityManagerInViewInterceptor = openEntityManagerInViewInterceptor;
+        this.usuarioValidation = usuarioValidation;
     }
 
     public OutUserDTO buscarId(Long id) {
@@ -47,17 +43,21 @@ public class UsuarioService {
         return mapperUser.converteParaSaidaUsuario(usuario.get());
     }
     public OutUserDTO create(InUserDTO inUserDTO) {
-        Usuario usuario = mapperUser.converteParaUsuaruio(inUserDTO);
-        if (usuario.getNome().isEmpty() || repository.findByEmail(usuario.getEmail()) != null) {
+        var usuario = mapperUser.converteParaUsuaruio(inUserDTO);
+        if (repository.findByEmail(usuario.getEmail()) != null) {
             throw new BadRequestException("O campo de nome é obrigatório e o usuário já está cadastrado.");
         }
         var senhaSegura  =  usuarioValidation.geraSenhaCriptografada(inUserDTO.getSenha());
         usuario.setSenha(senhaSegura);
 
+
         if (usuario.getPostal_code() != null && !usuario.getPostal_code().isEmpty()) {
-            ZipCodeStackLocalAddress location = usuarioValidation.validaPostalCode(usuario.getPostal_code());
+            var location = usuarioValidation.validaPostalCode(usuario.getPostal_code());
             usuario.setCity_en(location.getCity_en());
             usuario.setState_en(location.getState_en());
+        }
+        else {
+            throw  new BadRequestException("Postal Code deve estar preenchido.");
         }
         return mapperUser.converteParaSaidaUsuario(usuario);
     }
