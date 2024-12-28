@@ -121,6 +121,8 @@ public class UsuarioServiceTest {
         var inuser = mock(InUserDTO.class);
         var usuarioburro = mock(Usuario.class);
 
+        inuser.setPostal_code("90210");
+
         given(usuarioburro.getNome()).willReturn("");
         given(mapperUser.converteParaUsuaruio(inuser)).willReturn(usuarioburro);
 
@@ -128,7 +130,7 @@ public class UsuarioServiceTest {
             usuarioService.create(inuser);
 
         });
-        assertEquals("O campo de nome é obrigatório e o usuário já está cadastrado.", exception.getMessage());
+        assertEquals("O campo de nome é obrigatório..", exception.getMessage());
 
     }
 
@@ -141,25 +143,27 @@ public class UsuarioServiceTest {
             usuarioService.create(inUserDTO);
 
         });
-        assertEquals("O campo de nome é obrigatório e o usuário já está cadastrado.", exception.getMessage());
+        assertEquals("O campo de email é obrigatório.", exception.getMessage());
 
     }
 
     @Test
     public void deveRetornaErroPostalCodeNaoPreenchido() {
 
-        var usuarioPadrao = mock(Usuario.class);
-        var usuarioIn = mock(InUserDTO.class);
+        var inuser = mock(InUserDTO.class);
+        var usuarioburro = mock(Usuario.class);
 
-        given(mapperUser.converteParaUsuaruio(usuarioIn)).willReturn(usuarioPadrao);
-        given(usuarioPadrao.getPostal_code()).willReturn(null);
+        given(usuarioburro.getNome()).willReturn("Rhuan");
 
-        var execption = assertThrows(BadRequestException.class, () -> {
-            usuarioService.create(usuarioIn);
+        given(mapperUser.converteParaUsuaruio(inuser)).willReturn(usuarioburro);
+
+        var exception = assertThrows(BadRequestException.class, () -> {
+            usuarioService.create(inuser);
         });
-
-        assertEquals("Postal Code deve estar preenchido.", execption.getMessage());
+        assertEquals("Postal Code deve estar preenchido.", exception.getMessage());
     }
+
+
 
 
 

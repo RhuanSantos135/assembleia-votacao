@@ -44,21 +44,23 @@ public class UsuarioService {
     }
     public OutUserDTO create(InUserDTO inUserDTO) {
         var usuario = mapperUser.converteParaUsuaruio(inUserDTO);
+
+        if (usuario.getNome() == null || usuario.getNome().isEmpty()) {
+            throw new BadRequestException("O campo de nome é obrigatório..");
+        }
         if (repository.findByEmail(usuario.getEmail()) != null) {
-            throw new BadRequestException("O campo de nome é obrigatório e o usuário já está cadastrado.");
+            throw new BadRequestException("O campo de email é obrigatório.");
         }
         var senhaSegura  =  usuarioValidation.geraSenhaCriptografada(inUserDTO.getSenha());
         usuario.setSenha(senhaSegura);
 
+        if (usuario.getPostal_code() == null || usuario.getPostal_code().isEmpty()) {
+            throw new BadRequestException("Postal Code deve estar preenchido.");
+        }
+        var location = usuarioValidation.validaPostalCode(usuario.getPostal_code());
+        usuario.setCity_en(location.getCity_en());
+        usuario.setState_en(location.getState_en());
 
-        if (usuario.getPostal_code() != null && !usuario.getPostal_code().isEmpty()) {
-            var location = usuarioValidation.validaPostalCode(usuario.getPostal_code());
-            usuario.setCity_en(location.getCity_en());
-            usuario.setState_en(location.getState_en());
-        }
-        else {
-            throw  new BadRequestException("Postal Code deve estar preenchido.");
-        }
         return mapperUser.converteParaSaidaUsuario(usuario);
     }
 
