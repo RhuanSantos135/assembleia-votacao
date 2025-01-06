@@ -40,7 +40,7 @@ public class UsuarioController {
     })
     @GetMapping("buscar/{id}")
     public OutUserDTO buscaUsuario(@PathVariable  Long id){
-       return usuarioService.buscarId(id);
+       return usuarioService.buscarUsuarioId(id);
    }
 
      @Operation(summary = "Excluir usuario por ID", description = "Essa função tem como objetivo excluir o usuario por ID")
@@ -51,7 +51,7 @@ public class UsuarioController {
      })
      @DeleteMapping("/{id}")
     public void deletaUsuario(@PathVariable Long id) {
-         usuarioService.delete(id);
+         usuarioService.deletaPorIdUser(id);
     }
 
 }

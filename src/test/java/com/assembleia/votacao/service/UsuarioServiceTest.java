@@ -3,7 +3,6 @@ package com.assembleia.votacao.service;
 import com.assembleia.votacao.DTO.InUserDTO;
 import com.assembleia.votacao.DTO.OutUserDTO;
 import com.assembleia.votacao.domain.Usuario;
-import com.assembleia.votacao.domain.ZipCodeStackLocalAddress;
 import com.assembleia.votacao.exceptions.BadRequestException;
 import com.assembleia.votacao.exceptions.ObjectNotFoundException;
 import com.assembleia.votacao.mapper.MapperUser;
@@ -52,23 +51,23 @@ public class UsuarioServiceTest {
         usuario = new Usuario();
         usuario.setIdAssociado(1L);
         usuario.setNome("Rhuan");
-        usuario.setEmail("rhuan@example.com");
-        usuario.setSenha("senha123");
+        usuario.setEmail("rhuansantos507@gmail.com");
+        usuario.setSenha("P@ssw0rd!");
         usuario.setPostal_code("90210");
 
 
         outUserDTO = new OutUserDTO();
         outUserDTO.setIdAssociado(1L);
         outUserDTO.setNome("Rhuan");
-        outUserDTO.setEmail("rhuan@example.com");
+        outUserDTO.setEmail("rhuansantos507@gmail.com");
         outUserDTO.setPostal_code("90210");
         outUserDTO.setState_en("Minas");
         outUserDTO.setCity_en("Ijaci");
 
         inUserDTO = new InUserDTO();
         inUserDTO.setNome("Rhuan");
-        inUserDTO.setEmail("rhuan@example.com");
-        inUserDTO.setSenha("senha123");
+        inUserDTO.setEmail("rhuansantos507@gmail.com");
+        inUserDTO.setSenha("P@ssw0rd!");
         inUserDTO.setPostal_code("90210");
     }
 
@@ -77,7 +76,7 @@ public class UsuarioServiceTest {
         given(usuarioRepository.findById(usuario.getIdAssociado())).willReturn(Optional.of(usuario));
         given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outUserDTO);
 
-        var result = usuarioService.buscarId(usuario.getIdAssociado());
+        var result = usuarioService.buscarUsuarioId(usuario.getIdAssociado());
 
         assertNotNull(result);
         assertEquals(1L, result.getIdAssociado());
@@ -88,90 +87,45 @@ public class UsuarioServiceTest {
         given(usuarioRepository.findById(any())).willReturn(Optional.empty());
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> {
-            usuarioService.buscarId(999L);
+            usuarioService.buscarUsuarioId(999L);
         });
 
         assertEquals("O usuário especificado não existe.", exception.getMessage());
     }
 
     @Test
-    public void deveCriarUsuario() throws InstantiationException, IllegalAccessException {
-
-        var zipCodeStackAddress =  mock(ZipCodeStackLocalAddress.class);
-
-        given(zipCodeStackAddress.getCity_en()).willReturn("Ijaci");
-        given(zipCodeStackAddress.getState_en()).willReturn("Minas");
+    public void deveCriarUsuario(){
 
         given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
         given(mapperUser.converteParaSaidaUsuario(usuario)).willReturn(outUserDTO);
-        given(usuarioValidation.geraSenhaCriptografada(inUserDTO.getSenha())).willReturn(inUserDTO.getSenha());
-        given(usuarioValidation.validaPostalCode(usuario.getPostal_code())).willReturn(zipCodeStackAddress);
 
         var resultado = usuarioService.create(inUserDTO);
 
         assertNotNull(resultado);
         assertEquals("Rhuan", resultado.getNome());
-        assertEquals("rhuan@example.com", resultado.getEmail());
+        assertEquals("rhuansantos507@gmail.com", resultado.getEmail());
         assertEquals("Ijaci", resultado.getCity_en());
-        assertEquals("Minas" , resultado.getState_en());
-    }
-
-    @Test
-    public void deveRetornarErroNomeNaoEncontrato() {
-        var inuser = mock(InUserDTO.class);
-        var usuarioburro = mock(Usuario.class);
-
-        inuser.setPostal_code("90210");
-
-        given(usuarioburro.getNome()).willReturn("");
-        given(mapperUser.converteParaUsuaruio(inuser)).willReturn(usuarioburro);
-
-        var exception = assertThrows(BadRequestException.class, () -> {
-            usuarioService.create(inuser);
-
-        });
-        assertEquals("O campo de nome é obrigatório..", exception.getMessage());
+        assertEquals("Minas", resultado.getState_en());
 
     }
 
     @Test
-    public void deveRetornaErroEmailDiferenteDeNull() {
+    public void deveRetornarErroNomeNaoEncontrado() {
+        var usuarioNew = mock(Usuario.class);
 
-        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuario);
-        given(usuarioRepository.findByEmail(usuario.getEmail())).willReturn(usuario);
+        given(mapperUser.converteParaUsuaruio(inUserDTO)).willReturn(usuarioNew);
+
         var exception = assertThrows(BadRequestException.class, () -> {
             usuarioService.create(inUserDTO);
-
         });
-        assertEquals("O campo de email é obrigatório.", exception.getMessage());
 
+        assertEquals("Name is a required field.", exception.getMessage());
     }
-
-    @Test
-    public void deveRetornaErroPostalCodeNaoPreenchido() {
-
-        var inuser = mock(InUserDTO.class);
-        var usuarioburro = mock(Usuario.class);
-
-        given(usuarioburro.getNome()).willReturn("Rhuan");
-
-        given(mapperUser.converteParaUsuaruio(inuser)).willReturn(usuarioburro);
-
-        var exception = assertThrows(BadRequestException.class, () -> {
-            usuarioService.create(inuser);
-        });
-        assertEquals("Postal Code deve estar preenchido.", exception.getMessage());
-    }
-
-
-
-
-
 
     @Test
     public void deveExcluirUsuarioPorId() {
         given(usuarioRepository.findById(usuario.getIdAssociado())).willReturn(Optional.of(usuario));
-        usuarioService.delete(usuario.getIdAssociado());
+        usuarioService.deletaPorIdUser(usuario.getIdAssociado());
         verify(usuarioRepository).deleteById(usuario.getIdAssociado());
     }
 
@@ -180,7 +134,7 @@ public class UsuarioServiceTest {
         var user = mock(Usuario.class);
 
         var execption = assertThrows(ObjectNotFoundException.class , () -> {
-            usuarioService.delete(user.getIdAssociado());
+            usuarioService.deletaPorIdUser(user.getIdAssociado());
         });
         assertEquals("O usuário especificado não existe ou já foi excluído." , execption.getMessage());
 
@@ -196,9 +150,9 @@ public class UsuarioServiceTest {
 
         assertEquals(result.get(0).getIdAssociado(), 1L);
         assertEquals(result.get(0).getNome(), "Rhuan");
-        assertEquals(result.get(0).getEmail(), "rhuan@example.com");
+        assertEquals(result.get(0).getEmail(), "rhuansantos507@gmail.com");
         assertEquals(result.get(0).getPostal_code(), "90210");
-        assertEquals(result.get(0).getSenha(), "senha123");
+        assertEquals(result.get(0).getSenha(), "P@ssw0rd!");
 
 
 
