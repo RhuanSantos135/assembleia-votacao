@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class Votoservice {
@@ -54,24 +56,19 @@ public class Votoservice {
         if(dataLocal.isBefore(pauta.get().getPrazoPauta())){
             throw new RuntimeException("Votação em andamento!");
         }
-        int votosSim = 0;
-        int votosNao = 0 ;
-        String resultado = "";
-        for (int contador = 0 ; contador < votos.size() ; contador++){
-            if (votos.get(contador).getVotosSimNao()){
-                votosSim++;
-            } else {
-                votosNao++;
-            }
-        }
-        if(votosSim > votosNao){
-            resultado = "Pauta aprovada!";
-        }
-        else {
-        resultado =  "Pauta reprovada!";
-        }
 
-        return new ResultadoDTO( idPauta, pauta.get().getDescricao(), votosSim, votosNao, resultado);
+
+        Map<Boolean, Integer> votosContagem = votos.stream()
+                .collect(Collectors.partitioningBy(
+                        voto -> voto.getVotosSimNao(),
+                        Collectors.summingInt(v -> 1)
+                ));
+        int votosSim = votosContagem.getOrDefault(true, 0);
+        int votosNao = votosContagem.getOrDefault(false, 0);
+
+        String resultado = votosSim > votosNao ? "Pauta aprovada!" : "Pauta reprovada!";
+
+        return new ResultadoDTO(idPauta, pauta.get().getDescricao(), votosSim, votosNao, resultado);
 
     }
 

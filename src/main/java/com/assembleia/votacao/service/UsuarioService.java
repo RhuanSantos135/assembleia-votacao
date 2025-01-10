@@ -13,7 +13,7 @@ import com.assembleia.votacao.repository.UsuarioRepository;
 
 import java.util.List;
 
-import static com.assembleia.votacao.validation.UsuarioValidation.geraSenhaCriptografada;
+import static com.assembleia.votacao.utils.Utils.geraSenhaCriptografada;
 import static com.assembleia.votacao.validation.UsuarioValidation.validaCampos;
 
 @Service
