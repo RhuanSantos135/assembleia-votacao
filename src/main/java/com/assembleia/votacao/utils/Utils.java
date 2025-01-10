@@ -28,7 +28,7 @@ public class Utils {
 
         var response = zipCodeStackService.getLocation(postalCode, "BR");
 
-        var address = Optional.ofNullable(response)
+        ZipCodeStackLocalAddress  address = Optional.ofNullable(response)
                 .map(res -> res.getResults().get(postalCode))
                 .filter(list -> !list.isEmpty())
                 .map(list -> list.get(0))
